@@ -1,0 +1,10 @@
+[Unit]
+Description=devpi service
+Requires=network.target
+After=syslog.target network.target
+[Service]
+User=devpi
+Group=devpi
+ExecStart=/home/devpi/venv/devpi/bin/devpi-server --host {{ devpi.listen_host }} --port {{ devpi.listen_port }} --serverdir {{ devpi.serverdir }}
+[Install]
+WantedBy=multi-user.target

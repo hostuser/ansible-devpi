@@ -1,0 +1,7 @@
+---
+# defaults file for ansible-devpi
+
+devpi:
+  listen_host: 0.0.0.0
+  listen_port: 4040
+  serverdir: /home/devpi/devpi_serverdir

@@ -1,0 +1,8 @@
+- hosts: devpi
+  become: true
+  roles:
+   - role: ansible-devpi
+
+
+
+

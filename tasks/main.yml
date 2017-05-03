@@ -1,0 +1,46 @@
+---
+# tasks file for ansible-devpi
+- name: create 'devpi' user
+  user: 
+    name: devpi
+    shell: /bin/bash
+    comment: "devpi service user"
+
+- name: install python package dependencies
+  apt: name="{{ item }}"
+  with_items:
+    - build-essential
+    - python-dev
+    - libssl-dev 
+    - libffi-dev
+    - python-virtualenv
+    - python-pip
+    - sqlite3
+
+- name: install pip package requirements
+  become: yes
+  become_user: devpi
+  pip: name="{{ item }}"
+       virtualenv=/home/devpi/venv/devpi
+       state=latest
+  with_items:
+    - pip
+    - wheel
+    - devpi-server
+    - devpi-web
+
+- name: init devpi dir
+  become: yes
+  become_user: devpi
+  shell: /home/devpi/venv/devpi/bin/devpi-server --init --serverdir /home/devpi/devpi_serverdir
+  args:
+    creates: /home/devpi/devpi_serverdir
+
+- name: create unit file
+  template: src=devpi.j2 dest=/etc/systemd/system/devpi.service mode=644
+  notify:
+    - reload systemctl
+
+- name: start devpi
+  service: name=devpi state=started enabled=yes
+
